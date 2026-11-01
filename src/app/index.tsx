@@ -2,30 +2,74 @@
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { Picker } from '@react-native-picker/picker';
+import { Checkbox } from 'expo-checkbox';
 import { useState } from 'react';
-import { Image, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { Image, Keyboard, Pressable, ScrollView, StyleSheet, TextInput } from 'react-native';
+
 
 
 export default function HomeScreen() {
   const [homens, setHomens] = useState('');
   const [mulheres, setMulheres] = useState('');
   const [criancas, setCrianças] = useState('');
+  const [carneComprada, setCarneComprada] = useState(false);
+  const [cervejaComprada, setCervejaComprada] = useState(false);
+  const [refrigeranteComprado, setRefrigeranteComprado] = useState(false);
+  const [itensAdicionais, setItensAdicionais] = useState([]);
+  const [nomeItem, setNomeItem] = useState('');
+  const [quantidadeItem, setQuantidadeItem] = useState('');
+  const [categoriaItem, setCategoriaItem] = useState('Carne');
+  const itensComprados =
+    [carneComprada, cervejaComprada, refrigeranteComprado]
+      .filter(Boolean).length +
+    itensAdicionais.filter(item => item.comprado).length;
+
+  const adicionarItem = () => {
+    if (nomeItem.trim() === '' || quantidadeItem.trim() === '') {
+      return;
+    }
+
+    const novoItem = {
+      id: Date.now().toString(),
+      nome: nomeItem,
+      quantidade: Number(quantidadeItem),
+      categoria: categoriaItem,
+      comprado: false,
+    };
+
+    setItensAdicionais([...itensAdicionais, novoItem]);
+
+    setNomeItem('');
+    setQuantidadeItem('');
+    Keyboard.dismiss();
+  };
 
   const totalCarne =
     Number(homens) * 400 +
     Number(mulheres) * 300 +
     Number(criancas) * 200;
 
+  const totalCarneAdicional = itensAdicionais
+    .filter(item => item.categoria === 'Carne')
+    .reduce((total, item) => total + Number(item.quantidade), 0);
+
+  const totalCarneFinal = totalCarne + totalCarneAdicional;
+
   const totalCerveja = (Number(homens) + Number(mulheres)) * 1.5;
 
-  const totalRefrigerante = (Number(homens) + Number(mulheres) + Number(criancas)) * 600;
+  const totalRefrigerante =
+    (Number(homens) + Number(mulheres) + Number(criancas)) * 300;
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedView style={{ flex: 1, width: '100%' }}>
-        <ScrollView style={{ flex: 1 }}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled">
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+
+        <ThemedView style={{ width: '100%', alignItems: 'center' }}>
           <ThemedView style={styles.heroSection}>
 
             <Image source={require('../../assets/images/LogoChurrasCalc.png')}
@@ -33,78 +77,199 @@ export default function HomeScreen() {
               resizeMode="contain" />
 
           </ThemedView>
-
-          <ThemedText style={{ color: '#FFFFFF' }}>
-            Quantidade de homens:
-          </ThemedText>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a quantidade"
-            keyboardType="numeric"
-            returnKeyType="done"
-            onSubmitEditing={() => { }}
-            value={homens}
-            onChangeText={setHomens}
-          />
-
-          <ThemedText style={{ color: '#FFFFFF' }}>
-            Quantidade de mulheres:
-          </ThemedText>
-
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a quantidade"
-            keyboardType="numeric"
-            returnKeyType="done"
-
-            value={mulheres}
-            onChangeText={setMulheres}
-          />
-
-          <ThemedText style={{ color: '#FFFFFF' }}>
-            Quantidade de crianças:
-          </ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite a quantidade"
-            keyboardType="numeric"
-            returnKeyType="done"
-            onSubmitEditing={() => { }}
-            value={criancas}
-            onChangeText={setCrianças}
-          />
-          <ThemedView style={styles.resultCard}>
-            <ThemedText
-              type="subtitle"
-              style={{ color: '#FF7A00' }}
+          <ThemedView style={styles.shoppingCard}>
+            <ThemedText type="subtitle" style={{ color: '#FF7A00' }}>
+              Lista de compras
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="Nome do produto"
+              placeholderTextColor="#999999"
+              value={nomeItem}
+              onChangeText={setNomeItem}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Quantidade em gramas"
+              placeholderTextColor="#999999"
+              keyboardType="numeric"
+              returnKeyType="done"
+              onSubmitEditing={() => Keyboard.dismiss()}
+              value={quantidadeItem}
+              onChangeText={setQuantidadeItem}
+            />
+            <Picker
+              selectedValue={categoriaItem}
+              onValueChange={(itemValue) => setCategoriaItem(itemValue)}
+              style={{
+                width: '90%',
+                backgroundColor: '#252525',
+                color: '#FFFFFF',
+              }}
             >
-              Resultado do churrasco
-            </ThemedText>
-
-            <ThemedText>
-              Total de carne:{' '}
-              <ThemedText style={styles.resultValue}>
-                {(totalCarne / 1000).toFixed(2)} kg
+              <Picker.Item label="Carne" value="Carne" />
+              <Picker.Item label="Acompanhamento" value="Acompanhamento" />
+              <Picker.Item label="Bebida" value="Bebida" />
+              <Picker.Item label="Outros" value="Outros" />
+            </Picker>
+            <Pressable
+              style={styles.addButton}
+              onPress={adicionarItem}
+              accessible={true}
+            >
+              <ThemedText style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+                + Adicionar item
               </ThemedText>
-            </ThemedText>
+            </Pressable>
 
-            <ThemedText>
-              Total de cerveja:{' '}
-              <ThemedText style={styles.resultValue}>
-                {totalCerveja.toFixed(2)} litros
+            <ThemedView style={styles.shoppingItem}>
+              <Checkbox
+                value={carneComprada}
+                onValueChange={setCarneComprada}
+                color="#FF7A00"
+              />
+              <ThemedText
+                style={{
+                  textDecorationLine: carneComprada ? 'line-through' : 'none',
+                  opacity: carneComprada ? 0.5 : 1,
+                }}
+              >
+                Carne — {(totalCarneFinal / 1000).toFixed(2)} kg
               </ThemedText>
-            </ThemedText>
+            </ThemedView>
+            <ThemedView style={styles.shoppingItem}>
+              <Checkbox
+                value={cervejaComprada}
+                onValueChange={setCervejaComprada}
+                color="#FF7A00"
+              />
+              <ThemedText
+                style={{
+                  textDecorationLine: cervejaComprada ? 'line-through' : 'none',
+                  opacity: cervejaComprada ? 0.5 : 1,
+                }}
+              >
+                Cerveja — {totalCerveja.toFixed(2)} litros
+              </ThemedText>
 
-            <ThemedText>
-              Total de refrigerante:{' '}
-              <ThemedText style={styles.resultValue}>
-                {(totalRefrigerante / 1000).toFixed(2)} litros
+
+            </ThemedView>
+
+            <ThemedView style={styles.shoppingItem}>
+              <Checkbox
+                value={refrigeranteComprado}
+                onValueChange={setRefrigeranteComprado}
+                color="#FF7A00"
+              />
+              <ThemedText
+                style={{
+                  textDecorationLine: refrigeranteComprado ? 'line-through' : 'none',
+                  opacity: refrigeranteComprado ? 0.5 : 1,
+                }}
+              >
+                Refrigerante — {(totalRefrigerante / 1000).toFixed(2)} litros
               </ThemedText>
-            </ThemedText>
+
+            </ThemedView>
+            {itensAdicionais.map((item) => (
+              <ThemedView key={item.id} style={styles.shoppingItem}>
+                <Checkbox
+                  value={item.comprado}
+                  onValueChange={(valor) => {
+                    setItensAdicionais(
+                      itensAdicionais.map((produto) =>
+                        produto.id === item.id
+                          ? { ...produto, comprado: valor }
+                          : produto
+                      )
+                    );
+                  }}
+                  color="#FF7A00"
+                />
+                <ThemedText
+                  style={{
+                    textDecorationLine: item.comprado ? 'line-through' : 'none',
+                    opacity: item.comprado ? 0.5 : 1,
+                  }}
+                >
+                  {item.nome} — {item.quantidade} g
+                </ThemedText>
+              </ThemedView>
+            ))}
           </ThemedView>
-        </ScrollView>
-      </ThemedView>
+        </ThemedView>
+
+        <ThemedText style={{ color: '#FFFFFF' }}>
+          Quantidade de homens:
+        </ThemedText>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Digite a quantidade"
+          keyboardType="numeric"
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+          value={homens}
+          onChangeText={setHomens}
+        />
+
+        <ThemedText style={{ color: '#FFFFFF' }}>
+          Quantidade de mulheres:
+        </ThemedText>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Digite a quantidade"
+          keyboardType="numeric"
+          returnKeyType="done"
+
+          value={mulheres}
+          onChangeText={setMulheres}
+        />
+
+        <ThemedText style={{ color: '#FFFFFF' }}>
+          Quantidade de crianças:
+        </ThemedText>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite a quantidade"
+          keyboardType="numeric"
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+          value={criancas}
+          onChangeText={setCrianças}
+        />
+        <ThemedView style={styles.resultCard}>
+          <ThemedText
+            type="subtitle"
+            style={{ color: '#FF7A00' }}
+          >
+            Resultado do churrasco
+          </ThemedText>
+
+          <ThemedText>
+            Total de carne:{' '}
+            <ThemedText style={styles.resultValue}>
+              {(totalCarneFinal / 1000).toFixed(2)} kg
+            </ThemedText>
+          </ThemedText>
+
+          <ThemedText>
+            Total de cerveja:{' '}
+            <ThemedText style={styles.resultValue}>
+              {totalCerveja.toFixed(2)} litros
+            </ThemedText>
+          </ThemedText>
+
+          <ThemedText>
+            Total de refrigerante:{' '}
+            <ThemedText style={styles.resultValue}>
+              {(totalRefrigerante / 1000).toFixed(2)} litros
+            </ThemedText>
+          </ThemedText>
+
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -112,6 +277,27 @@ export default function HomeScreen() {
 
 
 const styles = StyleSheet.create({
+  shoppingCard: {
+    width: '90%',
+    backgroundColor: '#1E1E1E',
+    padding: 10,
+    borderRadius: 14,
+    marginTop: 15,
+    gap: 8,
+  },
+
+  shoppingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  addButton: {
+    backgroundColor: '#FF7A00',
+    padding: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
   scrollContent: {
     alignItems: 'center',
     paddingVertical: 30,
