@@ -8,15 +8,22 @@ import { useState } from 'react';
 import { Image, Keyboard, Pressable, ScrollView, StyleSheet, TextInput } from 'react-native';
 
 
-
+type ItemAdicional = {
+  id: string;
+  nome: string;
+  quantidade: number;
+  categoria: string;
+  comprado: boolean;
+};
 export default function HomeScreen() {
   const [homens, setHomens] = useState('');
   const [mulheres, setMulheres] = useState('');
   const [criancas, setCrianças] = useState('');
   const [carneComprada, setCarneComprada] = useState(false);
+  const [carvaoComprado, setCarvaoComprado] = useState(false);
   const [cervejaComprada, setCervejaComprada] = useState(false);
   const [refrigeranteComprado, setRefrigeranteComprado] = useState(false);
-  const [itensAdicionais, setItensAdicionais] = useState([]);
+  const [itensAdicionais, setItensAdicionais] = useState<ItemAdicional[]>([]);
   const [nomeItem, setNomeItem] = useState('');
   const [quantidadeItem, setQuantidadeItem] = useState('');
   const [categoriaItem, setCategoriaItem] = useState('Carne');
@@ -46,15 +53,17 @@ export default function HomeScreen() {
   };
 
   const totalCarne =
-    Number(homens) * 400 +
+    Number(homens) * 360 +
     Number(mulheres) * 300 +
-    Number(criancas) * 200;
+    Number(criancas) * 180;
 
   const totalCarneAdicional = itensAdicionais
     .filter(item => item.categoria === 'Carne')
     .reduce((total, item) => total + Number(item.quantidade), 0);
 
   const totalCarneFinal = totalCarne + totalCarneAdicional;
+  
+  const totalCarvao = Math.ceil(totalCarneFinal / 1000);
 
   const totalCerveja = (Number(homens) + Number(mulheres)) * 1.5;
 
@@ -77,126 +86,7 @@ export default function HomeScreen() {
               resizeMode="contain" />
 
           </ThemedView>
-          <ThemedView style={styles.shoppingCard}>
-            <ThemedText type="subtitle" style={{ color: '#FF7A00' }}>
-              Lista de compras
-            </ThemedText>
-            <TextInput
-              style={styles.input}
-              placeholder="Nome do produto"
-              placeholderTextColor="#999999"
-              value={nomeItem}
-              onChangeText={setNomeItem}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Quantidade em gramas"
-              placeholderTextColor="#999999"
-              keyboardType="numeric"
-              returnKeyType="done"
-              onSubmitEditing={() => Keyboard.dismiss()}
-              value={quantidadeItem}
-              onChangeText={setQuantidadeItem}
-            />
-            <Picker
-              selectedValue={categoriaItem}
-              onValueChange={(itemValue) => setCategoriaItem(itemValue)}
-              style={{
-                width: '90%',
-                backgroundColor: '#252525',
-                color: '#FFFFFF',
-              }}
-            >
-              <Picker.Item label="Carne" value="Carne" />
-              <Picker.Item label="Acompanhamento" value="Acompanhamento" />
-              <Picker.Item label="Bebida" value="Bebida" />
-              <Picker.Item label="Outros" value="Outros" />
-            </Picker>
-            <Pressable
-              style={styles.addButton}
-              onPress={adicionarItem}
-              accessible={true}
-            >
-              <ThemedText style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
-                + Adicionar item
-              </ThemedText>
-            </Pressable>
 
-            <ThemedView style={styles.shoppingItem}>
-              <Checkbox
-                value={carneComprada}
-                onValueChange={setCarneComprada}
-                color="#FF7A00"
-              />
-              <ThemedText
-                style={{
-                  textDecorationLine: carneComprada ? 'line-through' : 'none',
-                  opacity: carneComprada ? 0.5 : 1,
-                }}
-              >
-                Carne — {(totalCarneFinal / 1000).toFixed(2)} kg
-              </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.shoppingItem}>
-              <Checkbox
-                value={cervejaComprada}
-                onValueChange={setCervejaComprada}
-                color="#FF7A00"
-              />
-              <ThemedText
-                style={{
-                  textDecorationLine: cervejaComprada ? 'line-through' : 'none',
-                  opacity: cervejaComprada ? 0.5 : 1,
-                }}
-              >
-                Cerveja — {totalCerveja.toFixed(2)} litros
-              </ThemedText>
-
-
-            </ThemedView>
-
-            <ThemedView style={styles.shoppingItem}>
-              <Checkbox
-                value={refrigeranteComprado}
-                onValueChange={setRefrigeranteComprado}
-                color="#FF7A00"
-              />
-              <ThemedText
-                style={{
-                  textDecorationLine: refrigeranteComprado ? 'line-through' : 'none',
-                  opacity: refrigeranteComprado ? 0.5 : 1,
-                }}
-              >
-                Refrigerante — {(totalRefrigerante / 1000).toFixed(2)} litros
-              </ThemedText>
-
-            </ThemedView>
-            {itensAdicionais.map((item) => (
-              <ThemedView key={item.id} style={styles.shoppingItem}>
-                <Checkbox
-                  value={item.comprado}
-                  onValueChange={(valor) => {
-                    setItensAdicionais(
-                      itensAdicionais.map((produto) =>
-                        produto.id === item.id
-                          ? { ...produto, comprado: valor }
-                          : produto
-                      )
-                    );
-                  }}
-                  color="#FF7A00"
-                />
-                <ThemedText
-                  style={{
-                    textDecorationLine: item.comprado ? 'line-through' : 'none',
-                    opacity: item.comprado ? 0.5 : 1,
-                  }}
-                >
-                  {item.nome} — {item.quantidade} g
-                </ThemedText>
-              </ThemedView>
-            ))}
-          </ThemedView>
         </ThemedView>
 
         <ThemedText style={{ color: '#FFFFFF' }}>
@@ -269,6 +159,154 @@ export default function HomeScreen() {
           </ThemedText>
 
         </ThemedView>
+        <ThemedView style={styles.shoppingCard}>
+          <ThemedText type="subtitle" style={{ color: '#FF7A00' }}>
+            Lista de compras
+          </ThemedText>
+          <ThemedText style={{ color: '#BBBBBB' }}>
+            Itens comprados: {itensComprados} de {3 + itensAdicionais.length}
+          </ThemedText>
+          <TextInput
+            style={styles.input}
+            placeholder="Nome do produto"
+            placeholderTextColor="#999999"
+            value={nomeItem}
+            onChangeText={setNomeItem}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Quantidade em gramas"
+            placeholderTextColor="#999999"
+            keyboardType="numeric"
+            returnKeyType="done"
+            onSubmitEditing={() => Keyboard.dismiss()}
+            value={quantidadeItem}
+            onChangeText={setQuantidadeItem}
+          />
+          <Picker
+            selectedValue={categoriaItem}
+            onValueChange={(itemValue) => setCategoriaItem(itemValue)}
+            style={{
+              width: '90%',
+              backgroundColor: '#252525',
+              color: '#FFFFFF',
+            }}
+          >
+            <Picker.Item label="Carne" value="Carne" />
+            <Picker.Item label="Acompanhamento" value="Acompanhamento" />
+            <Picker.Item label="Bebida" value="Bebida" />
+            <Picker.Item label="Outros" value="Outros" />
+          </Picker>
+          <Pressable
+            style={styles.addButton}
+            onPress={adicionarItem}
+            accessible={true}
+          >
+            <ThemedText style={{ color: '#FFFFFF', fontWeight: 'bold' }}>
+              + Adicionar item
+            </ThemedText>
+          </Pressable>
+
+          <ThemedView style={styles.shoppingItem}>
+            <Checkbox
+              value={carneComprada}
+              onValueChange={setCarneComprada}
+              color="#FF7A00"
+            />
+            <ThemedText
+              style={{
+                textDecorationLine: carneComprada ? 'line-through' : 'none',
+                opacity: carneComprada ? 0.5 : 1,
+              }}
+            >
+              Carne — {(totalCarneFinal / 1000).toFixed(2)} kg
+            </ThemedText>
+          </ThemedView>
+          <ThemedView style={styles.shoppingItem}>
+            <Checkbox
+              value={cervejaComprada}
+              onValueChange={setCervejaComprada}
+              color="#FF7A00"
+            />
+            <ThemedText
+              style={{
+                textDecorationLine: cervejaComprada ? 'line-through' : 'none',
+                opacity: cervejaComprada ? 0.5 : 1,
+              }}
+            >
+              Cerveja — {totalCerveja.toFixed(2)} litros
+            </ThemedText>
+
+
+          </ThemedView>
+
+          <ThemedView style={styles.shoppingItem}>
+            <Checkbox
+              value={refrigeranteComprado}
+              onValueChange={setRefrigeranteComprado}
+              color="#FF7A00"
+            />
+            <ThemedText
+              style={{
+                textDecorationLine: refrigeranteComprado ? 'line-through' : 'none',
+                opacity: refrigeranteComprado ? 0.5 : 1,
+              }}
+            >
+              Refrigerante — {(totalRefrigerante / 1000).toFixed(2)} litros
+            </ThemedText>
+
+          </ThemedView>
+          {['Carne', 'Acompanhamento', 'Bebida', 'Outros'].map((categoria) => {
+            const produtos = itensAdicionais.filter(
+              (item) => item.categoria === categoria
+            );
+
+            if (produtos.length === 0) return null;
+
+            return (
+              <ThemedView key={categoria} style={{ width: '100%', gap: 8 }}>
+                <ThemedText
+                  style={{ color: '#FF7A00', fontWeight: 'bold', marginTop: 10 }}
+                >
+                  {categoria}
+                </ThemedText>
+
+                {produtos.map((item) => (
+                  <ThemedView key={item.id} style={styles.shoppingItem}>
+                    <Checkbox
+                      value={item.comprado}
+                      onValueChange={(valor) => {
+                        setItensAdicionais(
+                          itensAdicionais.map((produto) =>
+                            produto.id === item.id
+                              ? { ...produto, comprado: valor }
+                              : produto
+                          )
+                        );
+                      }}
+                      color="#FF7A00"
+                    />
+
+                    <ThemedText
+                      style={{
+                        textDecorationLine: item.comprado ? 'line-through' : 'none',
+                        opacity: item.comprado ? 0.5 : 1,
+                      }}
+                    >
+                      {item.nome} — {item.quantidade} {
+                        item.categoria === 'Bebida'
+                          ? 'L'
+                          : item.categoria === 'Outros'
+                            ? 'un.'
+                            : 'g'
+                      }
+                    </ThemedText>
+                  </ThemedView>
+                ))}
+              </ThemedView>
+            );
+          })}
+        </ThemedView>
       </ScrollView>
     </ThemedView>
   );
@@ -279,17 +317,21 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   shoppingCard: {
     width: '90%',
+    alignSelf: 'center',
     backgroundColor: '#1E1E1E',
-    padding: 10,
+    padding: 15,
     borderRadius: 14,
     marginTop: 15,
-    gap: 8,
+    gap: 12,
+    alignItems: 'center',
   },
 
   shoppingItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'stretch',
     gap: 10,
+    paddingHorizontal: 10,
   },
   addButton: {
     backgroundColor: '#FF7A00',
