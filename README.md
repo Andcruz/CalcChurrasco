@@ -2,7 +2,7 @@
 
 Aplicativo mobile desenvolvido para facilitar o planejamento de churrascos, estimando quantidades de itens necessários de acordo com o número de participantes.
 
-# Tecnologias utilizadas
+## Tecnologias utilizadas
 
 - React Native
 - Expo SDK 58
@@ -11,26 +11,26 @@ Aplicativo mobile desenvolvido para facilitar o planejamento de churrascos, esti
 - Expo Router
 - React Native Reanimated
 
-# Funcionalidades
+## Funcionalidades
 
 - Cálculo de quantidades para churrasco
 - Organização por categorias
 - Seleção de unidades por categoria
 - Estimativa de carvão necessário
 
-# Telas do aplicativo
+## Telas do aplicativo
 
-# Tela inicial
+## Tela inicial
 ![Tela inicial do ChurrasCalc](assets/churrasco.jpeg)
 
-# Resultado do cálculo
+## Resultado do cálculo
 ![Resultado do cálculo](assets/resultado-churrasco.jpeg)
 
-# Objetivo
+## Objetivo
 
 Projeto prático de desenvolvimento mobile, com foco em lógica de programação, construção de interfaces e utilização do React Native com Expo.
 
-# Como executar
+## Como executar
 
 1. Clone este repositório.
 2. Instale as dependências:
@@ -41,7 +41,7 @@ Projeto prático de desenvolvimento mobile, com foco em lógica de programação
 
    `npx expo start`
 
-## Autor
+### Autor
 
 Anderson Chaves da Cruz
 
