@@ -16,6 +16,14 @@ Aplicativo mobile desenvolvido para facilitar o planejamento de churrascos, esti
 - Seleção de unidades por categoria
 - Estimativa de carvão necessário
 
+## Telas do aplicativo
+
+### Tela inicial
+![Tela inicial do ChurrasCalc](assets/churrasco.jpeg)
+
+### Resultado do cálculo
+![Resultado do cálculo](assets/resultado-churrasco.jpeg)
+
 ## Objetivo
 
 Projeto prático de desenvolvimento mobile, com foco em lógica de programação, construção de interfaces e utilização do React Native com Expo.
