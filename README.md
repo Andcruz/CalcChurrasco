@@ -20,6 +20,7 @@ Aplicativo mobile desenvolvido para facilitar o planejamento de churrascos, esti
 - Organização dos produtos por categorias
 - Marcação dos itens já comprados
 - Inclusão de carnes adicionais no cálculo total
+- Estimativa da quantidade de carvão conforme o total de carne
 
 ## Telas do aplicativo
 
