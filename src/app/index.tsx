@@ -62,7 +62,7 @@ export default function HomeScreen() {
     .reduce((total, item) => total + Number(item.quantidade), 0);
 
   const totalCarneFinal = totalCarne + totalCarneAdicional;
-  
+
   const totalCarvao = Math.ceil(totalCarneFinal / 1000);
 
   const totalCerveja = (Number(homens) + Number(mulheres)) * 1.5;
@@ -141,6 +141,13 @@ export default function HomeScreen() {
             Total de carne:{' '}
             <ThemedText style={styles.resultValue}>
               {(totalCarneFinal / 1000).toFixed(2)} kg
+            </ThemedText>
+          </ThemedText>
+          
+          <ThemedText>
+            Total de carvão:{' '}
+            <ThemedText style={styles.resultValue}>
+              {totalCarvao} kg
             </ThemedText>
           </ThemedText>
 
