@@ -13,10 +13,13 @@ Aplicativo mobile desenvolvido para facilitar o planejamento de churrascos, esti
 
 ## Funcionalidades
 
-- Cálculo de quantidades para churrasco
-- Organização por categorias
-- Seleção de unidades por categoria
-- Estimativa de carvão necessário
+- Cálculo de carne conforme a quantidade de homens, mulheres e crianças
+- Estimativa de consumo de cerveja e refrigerante
+- Lista de compras personalizada
+- Adição de produtos e quantidades
+- Organização dos produtos por categorias
+- Marcação dos itens já comprados
+- Inclusão de carnes adicionais no cálculo total
 
 ## Telas do aplicativo
 
