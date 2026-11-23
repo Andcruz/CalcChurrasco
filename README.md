@@ -41,7 +41,7 @@ Projeto prático de desenvolvimento mobile, com foco em lógica de programação
 
    `npx expo start`
 
-# Autor
+## Autor
 
 Anderson Chaves da Cruz
 
